@@ -11,6 +11,7 @@ CHAR_UUID    = uuid.UUID('0000AA21-0000-1000-8000-00805F9B34FB')
 ble = Adafruit_BluefruitLE.get_provider()
 
 def main():
+    global chara, interrupted
     ble.clear_cached_data()
 
     adapter = ble.get_default_adapter()
@@ -59,7 +60,15 @@ def main():
         print('(Press Ctrl + C to exit)')
         chara.start_notify(received)
 
-        time.sleep(30)
+        interrupted = False
+        for i in range(30):
+            if interrupted == True:
+                break
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        print('disconnecting device, please wait...')
+        device.disconnect()
     
     finally:
         print('disconnecting device...')
@@ -75,6 +84,7 @@ def printDeviceInfo(device):
         print(device.name)
 
 def received(data):
+    global chara, interrupted
     print(data)
     srh = ord(data[0]) * 0x100 + ord(data[1])
     st = ord(data[2]) * 0x100 + ord(data[3])
@@ -82,6 +92,8 @@ def received(data):
     t = -46.85 + 175.72 * (st / 65536.0)
     print('humidity : ' + str(rh) + ' %')
     print('temperature : ' + str(t) + ' deg C')
+    chara.stop_notify()
+    interrupted = True
 
 
 ble.initialize()
