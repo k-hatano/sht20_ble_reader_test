@@ -86,8 +86,8 @@ def printDeviceInfo(device):
 def received(data):
     global chara, interrupted
     print(data)
-    srh = ord(data[0]) * 0x100 + ord(data[1])
-    st = ord(data[2]) * 0x100 + ord(data[3])
+    srh = ord(data[2]) * 0x100 + ord(data[3])
+    st = ord(data[0]) * 0x100 + ord(data[1])
     rh = -6.0 + 125.0 * (srh / 65536.0)
     t = -46.85 + 175.72 * (st / 65536.0)
     print('humidity : ' + str(rh) + ' %')
